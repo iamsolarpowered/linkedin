@@ -48,13 +48,13 @@ module LinkedIn
       # end
       #
       
-      def send_message(member_id, message)
+      def send_message(member_id, subject, message)
         path = "/people/~/mailbox"
-        resp = post(path, message_to_xml(member_id, message), {'Content-Type' => 'application/xml'})
+        resp = post(path, message_to_xml(member_id, subject, message), {'Content-Type' => 'application/xml'})
         (resp.message == "Created" || resp.code.to_s == '201')  ? true : false
       end
 
-      def message_to_xml(member_id,message)
+      def message_to_xml(member_id, subject, message)
           %Q{<?xml version="1.0" encoding="UTF-8"?>
             <mailbox-item>
                 <recipients>
@@ -62,7 +62,7 @@ module LinkedIn
                     <person path="/people/#{member_id}" />
                   </recipient>
                 </recipients>
-                <subject>Subject.</subject>
+                <subject>#{subject}</subject>
                 <body>#{message.strip}</body>
               </mailbox-item>}
       end
