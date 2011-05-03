@@ -24,29 +24,55 @@ module LinkedIn
       #   post(path, network_update_to_xml(message))
       # end
       #
-      def send_message(subject, body, recipient_paths)
-        path = "/people/~/mailbox"
-      
-        message         = LinkedIn::Message.new
-        message.subject = subject
-        message.body    = body
-        recipients      = LinkedIn::Recipients.new
-      
-        recipients.recipients = recipient_paths.map do |profile_path|
-          recipient             = LinkedIn::Recipient.new
-          recipient.person      = LinkedIn::Person.new
-          recipient.person.path = "/people/#{profile_path}"
-          recipient
-        end
-        message.recipients = recipients
-        post(path, message_to_xml(message)).code
-      end
+      # def send_message(subject, body, recipient_paths)
+      #   path = "/people/~/mailbox"
+      #
+      #   message         = LinkedIn::Message.new
+      #   message.subject = subject
+      #   message.body    = body
+      #   recipients      = LinkedIn::Recipients.new
+      #
+      #   recipients.recipients = recipient_paths.map do |profile_path|
+      #     recipient             = LinkedIn::Recipient.new
+      #     recipient.person      = LinkedIn::Person.new
+      #     recipient.person.path = "/people/#{profile_path}"
+      #     recipient
+      #   end
+      #   message.recipients = recipients
+      #   post(path, message_to_xml(message)).code
+      # end
       #
       # def clear_status
       #   path = "/people/~/current-status"
       #   delete(path).code
       # end
       #
+      
+      def send_message(member_id, message)
+        path = "/people/~/mailbox"
+        resp = post(path, message_to_xml(member_id, message), {'Content-Type' => 'application/xml'})
+        (resp.message == "Created" || resp.code.to_s == '201')  ? true : false
+      end
+
+      def message_to_xml(member_id,message)
+          %Q{<?xml version="1.0" encoding="UTF-8"?>
+            <mailbox-item>
+                <recipients>
+                  <recipient>
+                    <person path="/people/#{member_id}" />
+                  </recipient>
+                </recipients>
+                <subject>Subject.</subject>
+                <body>#{message.strip}</body>
+              </mailbox-item>}
+      end
+
+      def post(path, body='', options={})
+        path = "/v1#{path}"
+        response = access_token.post(path, body, options)
+        raise_errors(response)
+        response
+      end
 
     end
 
