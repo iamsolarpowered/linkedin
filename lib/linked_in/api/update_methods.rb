@@ -2,6 +2,7 @@ module LinkedIn
   module Api
 
     module UpdateMethods
+      
       include Helpers::Request
 
       # def update_status(text)
