@@ -18,6 +18,11 @@ module LinkedIn
         simple_query(path, options)
       end
 
+      def job_search(options={})
+        path = job_search_path(options)
+        simple_query(path, options)
+      end
+
       private
 
         def simple_query(path, options={})
@@ -43,6 +48,18 @@ module LinkedIn
           end
         end
 
+        def job_search_path(options)
+          path = "/job-search"
+          query_pairs = options.inject([]) { |pairs, (key, value)| pairs + make_query_pairs(key, value) }
+          query_string = query_pairs.collect { |name, value| "#{CGI.escape(name)}=#{CGI.escape(value)}" }.join('&')
+          path += "?#{query_string}" if query_string
+          path
+        end
+
+        def make_query_pairs(key, value)
+          key = key.to_s
+          [value].flatten.compact.collect { |v| [key, v.to_s] }
+        end
     end
 
   end
