@@ -31,7 +31,7 @@ module LinkedIn
           if options[:public]
             path +=":public"
           elsif fields
-            path +=":(#{fields.map{ |f| f.to_s.gsub("_","-") }.join(',')})"
+            path +=":(#{format_fields(fields)})"
           end
 
           Mash.from_json(get(path))
@@ -50,10 +50,17 @@ module LinkedIn
 
         def job_search_path(options)
           path = "/job-search"
+          if fields = options.delete(:fields)
+            path += ":(jobs:(#{format_fields(fields)}))"
+          end
           query_pairs = options.inject([]) { |pairs, (key, value)| pairs + make_query_pairs(key, value) }
           query_string = query_pairs.collect { |name, value| "#{CGI.escape(name)}=#{CGI.escape(value)}" }.join('&')
           path += "?#{query_string}" if query_string
           path
+        end
+
+        def format_fields(fields)
+          fields.map{ |f| f.to_s.gsub("_","-") }.join(',')
         end
 
         def make_query_pairs(key, value)
