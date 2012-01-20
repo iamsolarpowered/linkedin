@@ -26,6 +26,13 @@ module LinkedIn
         path   = company_path(options)
         simple_query(path, options)
       end
+      
+      def company_search(options = {})
+        path = "/company-search:(companies)"
+        path += "?keywords=#{CGI.escape(options[:keywords])}"
+        result_json = get(to_uri(path, options))
+        Mash.from_json(result_json)
+      end
 
       private
 
@@ -65,10 +72,6 @@ module LinkedIn
           else
             path += "~"
           end
-          query_pairs = options.inject([]) { |pairs, (key, value)| pairs + make_query_pairs(key, value) }
-          query_string = query_pairs.collect { |name, value| "#{CGI.escape(name)}=#{CGI.escape(value)}" }.join('&')
-          path += "?#{query_string}" if query_string
-          path
         end
 
         def job_search_path(options)
