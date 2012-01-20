@@ -20,6 +20,10 @@ module LinkedIn
 
       def job_search(options={})
         path = job_search_path(options)
+      end
+
+      def company(options = {})
+        path   = company_path(options)
         simple_query(path, options)
       end
 
@@ -31,10 +35,10 @@ module LinkedIn
           if options[:public]
             path +=":public"
           elsif fields
-            path +=":(#{format_fields(fields)})"
+            path +=":(#{fields.map{ |f| f.to_s.gsub("_","-") }.join(',')})"
           end
-
-          Mash.from_json(get(path))
+          headers = options[:headers] || {}
+          Mash.from_json(get(path, headers))
         end
 
         def person_path(options)
@@ -46,6 +50,25 @@ module LinkedIn
           else
             path += "~"
           end
+        end
+
+        def company_path(options)
+          path = "/companies/"
+          if options[:id]
+            path += "id=#{options[:id]}"
+          elsif options[:url]
+            path += "url=#{CGI.escape(options[:url])}"
+          elsif options[:name]
+            path += "universal-name=#{CGI.escape(options[:name])}"
+          elsif options[:domain]
+            path += "email-domain=#{CGI.escape(options[:domain])}"
+          else
+            path += "~"
+          end
+          query_pairs = options.inject([]) { |pairs, (key, value)| pairs + make_query_pairs(key, value) }
+          query_string = query_pairs.collect { |name, value| "#{CGI.escape(name)}=#{CGI.escape(value)}" }.join('&')
+          path += "?#{query_string}" if query_string
+          path
         end
 
         def job_search_path(options)

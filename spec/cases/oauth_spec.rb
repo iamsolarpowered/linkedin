@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'helper'
 
 describe "LinkedIn::Client" do
 
@@ -13,7 +13,7 @@ describe "LinkedIn::Client" do
       let(:consumer) { client.consumer }
 
       it "should return a configured OAuth consumer" do
-        consumer.site.should == ''
+        consumer.site.should == 'https://api.linkedin.com'
         consumer.request_token_url.should == 'https://api.linkedin.com/uas/oauth/requestToken'
         consumer.access_token_url.should == 'https://api.linkedin.com/uas/oauth/accessToken'
         consumer.authorize_url.should == 'https://www.linkedin.com/uas/oauth/authorize'
@@ -29,6 +29,7 @@ describe "LinkedIn::Client" do
       end
 
       it "should return a configured OAuth consumer" do
+        consumer.site.should == 'https://api.josh.com'
         consumer.request_token_url.should == 'https://api.josh.com/uas/oauth/requestToken'
         consumer.access_token_url.should == 'https://api.josh.com/uas/oauth/accessToken'
         consumer.authorize_url.should == 'https://www.josh.com/uas/oauth/authorize'
@@ -45,6 +46,7 @@ describe "LinkedIn::Client" do
       end
 
       it "should return a configured OAuth consumer" do
+        consumer.site.should == 'https://api.linkedin.com'
         consumer.request_token_url.should == 'https://api.linkedin.com/secure/oauth/requestToken'
         consumer.access_token_url.should == 'https://api.linkedin.com/secure/oauth/accessToken'
         consumer.authorize_url.should == 'https://www.linkedin.com/secure/oauth/authorize'
@@ -61,6 +63,7 @@ describe "LinkedIn::Client" do
       end
 
       it "should return a configured OAuth consumer" do
+        consumer.site.should == 'https://api.linkedin.com'
         consumer.request_token_url.should == 'https://api.josh.com/secure/oauth/requestToken'
         consumer.access_token_url.should == 'https://api.josh.com/secure/oauth/accessToken'
         consumer.authorize_url.should == 'https://www.josh.com/secure/oauth/authorize'
@@ -75,6 +78,7 @@ describe "LinkedIn::Client" do
       end
 
       it "should return a configured OAuth consumer" do
+        consumer.site.should == 'https://api.josh.com'
         consumer.request_token_url.should == 'https://api.josh.com/uas/oauth/requestToken'
         consumer.access_token_url.should == 'https://api.josh.com/uas/oauth/accessToken'
         consumer.authorize_url.should == 'https://api.josh.com/uas/oauth/authorize'
@@ -143,7 +147,6 @@ describe "LinkedIn::Client" do
 
     it "should return a valid auth token" do
       access_token.should be_a_kind_of OAuth::AccessToken
-      access_token.token.should be_a_kind_of String
       access_token.token.should be_a_kind_of String
     end
   end
