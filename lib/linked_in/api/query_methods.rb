@@ -20,6 +20,8 @@ module LinkedIn
 
       def job_search(options={})
         path = job_search_path(options)
+        result_json = get path
+        Mash.from_json(result_json)
       end
 
       def company(options = {})
